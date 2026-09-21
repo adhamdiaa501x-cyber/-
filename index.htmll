@@ -1,1 +1,516 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>هايبر ابن المنوفية</title>
+  <style>
+    :root {
+      --primary: #2e7d32;
+      --primary-dark: #1b5e20;
+      --accent: #fbc02d;
+      --bg: #f4f6f8;
+      --card-bg: #ffffff;
+      --text: #333;
+    }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding-bottom: 60px;
+    }
+
+    /* Header */
+    header {
+      background-color: var(--primary);
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+    }
+
+    .cart-btn {
+      background-color: var(--accent);
+      color: #000;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Layout */
+    .container {
+      max-width: 1100px;
+      margin: 20px auto;
+      padding: 0 15px;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Product Grid */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .product-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: center;
+    }
+
+    .product-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin: 10px 0 5px;
+    }
+
+    .product-price {
+      color: var(--primary-dark);
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+
+    .flavor-select {
+      width: 100%;
+      padding: 6px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .add-to-cart-btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    .add-to-cart-btn:hover {
+      background-color: var(--primary-dark);
+    }
+
+    /* Cart & Checkout Panel */
+    .panel {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      height: fit-content;
+    }
+
+    .panel h2 {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      border-bottom: 2px solid var(--bg);
+      padding-bottom: 8px;
+      color: var(--primary);
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .cart-item-info {
+      font-size: 0.9rem;
+    }
+
+    .qty-btn {
+      background: #eee;
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .checkout-form {
+      margin-top: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 0.9rem;
+    }
+
+    .payment-options {
+      display: flex;
+      gap: 10px;
+      margin: 10px 0;
+    }
+
+    .payment-option {
+      flex: 1;
+      border: 1px solid #ccc;
+      padding: 8px;
+      border-radius: 6px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .payment-option.active {
+      border-color: var(--primary);
+      background-color: #e8f5e9;
+      font-weight: bold;
+    }
+
+    .instapay-info {
+      background: #fff8e1;
+      border: 1px dashed #ffa000;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 0.95rem;
+    }
+
+    .summary-row.total {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: var(--primary-dark);
+      border-top: 1px solid #ccc;
+      padding-top: 8px;
+      margin-top: 12px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background-color: #25d366;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    .submit-btn:hover {
+      background-color: #128c7e;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🛒 هايبر ابن المنوفية</h1>
+    <button class="cart-btn" onclick="scrollToCart()">
+      السلة (<span id="cart-count">0</span>)
+    </button>
+  </header>
+
+  <div class="container">
+    <!-- قائمة المنتجات -->
+    <div>
+      <h2 style="margin-bottom: 15px;">المنتجات المتاحة</h2>
+      <div class="products-grid" id="products-container"></div>
+    </div>
+
+    <!-- السلة وتفاصيل التوصيل -->
+    <div class="panel" id="cart-panel">
+      <h2>عربة التسوق</h2>
+      <div id="cart-items">
+        <p style="color: #777; text-align: center;">السلة فارغة حالياً</p>
+      </div>
+
+      <div class="checkout-form">
+        <h2>تفاصيل التوصيل والدفع</h2>
+        <div class="form-group">
+          <label>الاسم بالكامل</label>
+          <input type="text" id="cust-name" placeholder="أدخل اسمك">
+        </div>
+        <div class="form-group">
+          <label>رقم الموبايل</label>
+          <input type="tel" id="cust-phone" placeholder="01xxxxxxxxx">
+        </div>
+        <div class="form-group">
+          <label>العنوان التفصيلي</label>
+          <textarea id="cust-address" rows="2" placeholder="المنطقة، الشارع، رقم العمارة، رقم الشقة"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>طريقة الدفع</label>
+          <div class="payment-options">
+            <div class="payment-option active" id="pay-cod" onclick="selectPayment('cod')">كاش عند التسليم</div>
+            <div class="payment-option" id="pay-insta" onclick="selectPayment('insta')">انستا باي</div>
+          </div>
+        </div>
+
+        <div class="instapay-info" id="instapay-box">
+          📌 <strong>بيانات التحويل عبر انستا باي:</strong><br>
+          عنوان الدفع / الرقم: <code>01000000000</code><br>
+          <small>* يرجى إرفاق صورة التحويل بعد الطلب عبر الواتساب.</small>
+        </div>
+
+        <!-- الملخص الحسابي -->
+        <div class="summary-row">
+          <span>إجمالي المنتجات:</span>
+          <span><span id="subtotal">0</span> ج.م</span>
+        </div>
+        <div class="summary-row">
+          <span>مصاريف التوصيل:</span>
+          <span><span id="delivery-fee">15</span> ج.م</span>
+        </div>
+        <div class="summary-row total">
+          <span>السعر الكلي:</span>
+          <span><span id="grand-total">15</span> ج.م</span>
+        </div>
+
+        <button class="submit-btn" onclick="submitOrder()">تأكيد الطلب عبر الواتساب</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 1. قاعدة بيانات المنتجات
+    const products = [
+      { id: 1, name: "لبن مزارع دينا", price: 45 },
+      { id: 2, name: "بسكويت فيري - كبير", price: 10 },
+      { id: 3, name: "بسكويت فيري - صغير", price: 5 },
+      { 
+        id: 4, 
+        name: "عصير بيتي", 
+        price: 10, 
+        flavors: ["كوكتيل", "تفاح", "برتقال", "مانجو", "جوافة"] 
+      },
+      { id: 5, name: "مياه بركة - لتر ونص", price: 12 }
+    ];
+
+    let cart = [];
+    let paymentMethod = 'cod';
+    const deliveryFee = 15; // مصاريف التوصيل
+
+    // 2. عرض المنتجات
+    function renderProducts() {
+      const container = document.getElementById('products-container');
+      container.innerHTML = '';
+
+      products.forEach(p => {
+        let flavorSelect = '';
+        if (p.flavors) {
+          flavorSelect = `
+            <select class="flavor-select" id="flavor-${p.id}">
+              ${p.flavors.map(f => `<option value="${f}">${f}</option>`).join('')}
+            </select>
+          `;
+        }
+
+        container.innerHTML += `
+          <div class="product-card">
+            <div class="product-title">${p.name}</div>
+            <div class="product-price">${p.price} ج.م</div>
+            ${flavorSelect}
+            <button class="add-to-cart-btn" onclick="addToCart(${p.id})">إضافة للسلة</button>
+          </div>
+        `;
+      });
+    }
+
+    // 3. إضافة إلى السلة
+    function addToCart(productId) {
+      const product = products.find(p => p.id === productId);
+      let selectedFlavor = null;
+
+      if (product.flavors) {
+        selectedFlavor = document.getElementById(`flavor-${productId}`).value;
+      }
+
+      const cartItemKey = selectedFlavor ? `${product.id}-${selectedFlavor}` : `${product.id}`;
+      const existing = cart.find(item => item.key === cartItemKey);
+
+      if (existing) {
+        existing.qty++;
+      } else {
+        cart.push({
+          key: cartItemKey,
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          flavor: selectedFlavor,
+          qty: 1
+        });
+      }
+      updateCart();
+    }
+
+    // 4. تحديث السلة والأسعار
+    function updateCart() {
+      const container = document.getElementById('cart-items');
+      const cartCount = document.getElementById('cart-count');
+      const subtotalEl = document.getElementById('subtotal');
+      const grandTotalEl = document.getElementById('grand-total');
+
+      if (cart.length === 0) {
+        container.innerHTML = '<p style="color: #777; text-align: center;">السلة فارغة حالياً</p>';
+        cartCount.innerText = '0';
+        subtotalEl.innerText = '0';
+        grandTotalEl.innerText = '0';
+        return;
+      }
+
+      container.innerHTML = '';
+      let subtotal = 0;
+      let totalItems = 0;
+
+      cart.forEach((item, index) => {
+        const itemTotal = item.price * item.qty;
+        subtotal += itemTotal;
+        totalItems += item.qty;
+
+        container.innerHTML += `
+          <div class="cart-item">
+            <div class="cart-item-info">
+              <strong>${item.name}</strong> ${item.flavor ? `(${item.flavor})` : ''}<br>
+              <small>${item.price} × ${item.qty} = ${itemTotal} ج.م</small>
+            </div>
+            <div>
+              <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
+              <span style="margin: 0 5px;">${item.qty}</span>
+              <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
+            </div>
+          </div>
+        `;
+      });
+
+      cartCount.innerText = totalItems;
+      subtotalEl.innerText = subtotal;
+      grandTotalEl.innerText = subtotal + deliveryFee;
+    }
+
+    // 5. تغيير الكميات
+    function changeQty(index, change) {
+      cart[index].qty += change;
+      if (cart[index].qty <= 0) {
+        cart.splice(index, 1);
+      }
+      updateCart();
+    }
+
+    // 6. اختيار طريقة الدفع
+    function selectPayment(method) {
+      paymentMethod = method;
+      document.getElementById('pay-cod').classList.toggle('active', method === 'cod');
+      document.getElementById('pay-insta').classList.toggle('active', method === 'insta');
+      document.getElementById('instapay-box').style.display = method === 'insta' ? 'block' : 'none';
+    }
+
+    // 7. إرسال الطلب عبر الواتساب
+    function submitOrder() {
+      const name = document.getElementById('cust-name').value.trim();
+      const phone = document.getElementById('cust-phone').value.trim();
+      const address = document.getElementById('cust-address').value.trim();
+
+      if (cart.length === 0) {
+        alert('يرجى إضافة منتجات إلى السلة أولاً!');
+        return;
+      }
+
+      if (!name || !phone || !address) {
+        alert('يرجى ملء جميع البيانات (الاسم، الهاتف، العنوان)');
+        return;
+      }
+
+      let subtotal = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+      let total = subtotal + deliveryFee;
+      let paymentText = paymentMethod === 'cod' ? 'كاش عند التسليم' : 'انستا باي (InstaPay)';
+
+      let message = `🛒 *طلب جديد من هايبر ابن المنوفية*\n\n`;
+      message += `👤 *بيانات العميل:*\n`;
+      message += `• الاسم: ${name}\n`;
+      message += `• الهاتف: ${phone}\n`;
+      message += `• العنوان: ${address}\n\n`;
+
+      message += `📦 *تفاصيل الطلب:*\n`;
+      cart.forEach(item => {
+        message += `• ${item.name} ${item.flavor ? `(${item.flavor})` : ''} - العدد: ${item.qty} - السعر: ${item.price * item.qty} ج.م\n`;
+      });
+
+      message += `\n💵 *الملخص الحسابي:*\n`;
+      message += `• إجمالي المنتجات: ${subtotal} ج.م\n`;
+      message += `• التوصيل: ${deliveryFee} ج.م\n`;
+      message += `• *السعر الكلي: ${total} ج.م*\n\n`;
+      message += `💳 *طريقة الدفع:* ${paymentText}`;
+
+      // ضع رقم واتساب الهايبر بدلاً من 201000000000
+      const whatsappPhone = "201000000000"; 
+      const url = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(message)}`;
+      
+      window.open(url, '_blank');
+    }
+
+    function scrollToCart() {
+      document.getElementById('cart-panel').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // تشغيل العرض الابتدائي
+    renderProducts();
+  </script>
+</body>
+</html>
